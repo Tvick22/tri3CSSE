@@ -9,6 +9,8 @@ hide: true
 
 <!-- Include submenu from _includes to top of pages -->
 {% include nav_home.html %}
+
+---
 <!--- Concatenation of site URL to frontmatter image  --->
 
 <!--- HTML for page contains <p> tag named "Mario" and class properties for a "sprite"  -->

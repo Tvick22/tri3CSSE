@@ -1,7 +1,50 @@
-<table>
-    <tr>
-        <td><img src="{{site.baseurl}}//images/logo.png" height="60" title="Frontend" alt=""></td>
-        <td><a href="{{site.baseurl}}/navigation/csse">CSSE</a></td>
-        <td><a href="{{site.baseurl}}/navigation/game">Game</a></td>
-    </tr>
-</table>
+<div class="container">
+    <p>
+        <em class="blogsDesc">My blogs offer daily accounts of my programming knowledge, along with discoveries and projects I have been pursuing.</em>
+    </p>
+    <p>
+        <a class="blogsLink" href="{{site.baseurl}}/blogs">Blogs</a>
+    </p>
+</div>
+
+<style>
+    .container {
+        margin: 0 auto;
+        padding: 4%;
+        display: block;
+        text-align: center;
+    }
+    .blogsDesc {
+        font-style: normal;
+        color: white;
+        font-size: 1.625rem;
+        font-weight: 400;
+        letter-spacing: -1px;
+        margin-bottom: 0;
+        float: left;
+        padding-bottom: 4%;
+    }
+    .blogsLink {
+        display: inline-block;
+        padding: 1rem 6rem 1rem;
+        background: rgb(136,235,255);
+        background: linear-gradient(90deg, rgba(136,235,255,1) 0%, rgba(91,192,212,1) 100%);
+        border: 0;
+        font-size: large;
+        font-weight:bolder;
+        font-weight: 700;
+        border-radius: 0.3rem;
+    }
+    .blogsLink:hover {
+        display: inline-block;
+        padding: 1rem 6rem 1rem;
+        background: rgb(95,228,255);
+        background: linear-gradient(90deg, rgba(95,228,255,1) 0%, rgba(59,189,215,1) 100%);
+        border: 0;
+        text-decoration: none;
+        font-size: large;
+        font-weight:bolder;
+        font-weight: 700;
+        border-radius: 0.3rem;
+    }
+</style>
