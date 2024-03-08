@@ -38,7 +38,7 @@ image: /images/platformer/backgrounds/hills.png
     const START_Y = 400
 
     let GRAVITY_SPEED = 9.3 //unit/frame
-    let JUMP_POWER = 18 + GRAVITY_SPEED //speed to max jump height
+    let JUMP_POWER = 15 + GRAVITY_SPEED //speed to max jump height
     let MAX_JUMP_HEIGHT = 170 //max jump height
     let MIN_JUMP_HEIGHT = 20 //min jump height
 
@@ -170,7 +170,7 @@ image: /images/platformer/backgrounds/hills.png
         if (lopez.y < gameFrame.height-(backgroundImage.playerScaleFactor*SPRITE_HEIGHT) && !isLoading) {
                 lopez.y += GRAVITY_SPEED
             if (currentKeys.includes("down") && lopez.isMoving) {
-                lopez.y += LOPEZ_SPEED
+                // lopez.y += LOPEZ_SPEED
             }
         }
         if (currentKeys.includes("left") && lopez.isMoving && lopez.x > 0 && !isLoading) {
@@ -190,7 +190,7 @@ image: /images/platformer/backgrounds/hills.png
             }
         }
 
-        if (lopez.isMoving) {
+        if (lopez.isMoving && currentKeys[currentKeys.length-1] != "up" && currentKeys[currentKeys.length-1] != "down") {
             lopez.currentDirection = currentKeys[currentKeys.length-1];
         }
 

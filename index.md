@@ -20,6 +20,12 @@ hide: true
 --->
 
 <!--- Embedded executable code--->
+<p style="text-align: center;">
+        <a href="https://tvick22.github.io/MORTal_Combat_Game/">Tri 1 Game</a>
+</p>
+
+---
+
 Investing in Your Technical Future
 
 Explore the Computer Science Pathway at Del Norte High School. All Del Norte CompSci classes are designed to provide a real-world development experience. Grading is focused on time invested, analytics, participation with peers, and engagement in learning.
