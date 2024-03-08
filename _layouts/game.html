@@ -1,0 +1,251 @@
+---
+layout: base
+title: Dynamic Game Levels v2.0 
+description: Incorporate student lessons goombas, platforms, parallax backgrounds, settings with local storage, etc.  Refactor code introducing GameSetup and SettingsControl.  Style is moved into _sass.
+type: ccc
+courses: { csse: {week: 13} }
+image: /images/platformer/backgrounds/hills.png
+---
+
+<!-- Syle is now located, as of Jan 2024 v2.0, in _sass/minima/platformer-styles.scss -->
+
+<!-- DOM Settings Panel (sidebar id and div), managed by SettingsContro.js -->
+<!-- Wrap both the controls and gameplay in a container div -->
+  <canvas id="gameContainer">
+    <img id="hills" src="../images/platformer/backgrounds/hills.png">
+    <img id="playerSprite" src="../images/platformer/sprites/lopezspritesheet3.png">
+  </canvas>
+  <!-- JavaScript-generated canvas items are inserted here -->
+
+<script type="module">
+    window.addEventListener('load', function () {
+    const gameFrame = document.getElementById('gameContainer');
+    const ctx = gameFrame.getContext('2d');
+
+
+    const firstBackgroundImage = document.getElementById("hills")
+    const BACKGROUND_HEIGHT = 500
+    const BACKGROUND_WIDTH = 1000
+
+    let LOPEZ_SPEED = 4;
+    let ANIMATION_SPEED = 100
+    const FRAME_LIMIT = 4;  // matches number of frames per sprite row, this code assume each row is same
+    const SPRITE_WIDTH = 46;  // matches sprite pixel width
+    const SPRITE_HEIGHT = 52.5; // matches sprite pixel height
+    const SCALE_FACTOR = 1.7;  // control size of sprite on canvas
+
+    const START_X = 0
+    const START_Y = 400
+
+    let GRAVITY_SPEED = 9.3 //unit/frame
+    let JUMP_POWER = 18 + GRAVITY_SPEED //speed to max jump height
+    let MAX_JUMP_HEIGHT = 170 //max jump height
+    let MIN_JUMP_HEIGHT = 20 //min jump height
+
+    gameFrame.width = BACKGROUND_WIDTH
+    gameFrame.height = BACKGROUND_HEIGHT
+
+    class Lopez {
+        constructor() {
+            this.image = document.getElementById("playerSprite");
+            this.x = START_X;
+            this.y = START_Y;
+            this.width = SPRITE_WIDTH*SCALE_FACTOR
+            this.height = SPRITE_HEIGHT*SCALE_FACTOR
+            this.minFrame = 0;
+            this.maxFrame = FRAME_LIMIT -1;
+            this.frameX = 0;
+            this.frameY = 0;
+            this.currentDirection = 'down'; 
+            this.isMoving = false;
+            this.isFloored = false;
+            this.isJumping = false;
+            this.startJumpY = undefined;
+            this.currJumpHeight = MIN_JUMP_HEIGHT;
+        }
+        draw(context) {
+            context.drawImage(
+                this.image,
+                this.frameX * SPRITE_WIDTH,
+                this.frameY * SPRITE_HEIGHT,
+                SPRITE_WIDTH,
+                SPRITE_HEIGHT,
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+        }
+        // update frameX of object
+        updateFrame() {
+            if (this.frameX < this.maxFrame) {
+                this.frameX++;
+            } else {
+                this.frameX = 0;
+            }
+        }
+    }
+
+    class BackgroundImage {
+        constructor () {
+            this.image = firstBackgroundImage;
+            this.height = Number(this.image.getAttribute("height"));
+            this.width = Number(this.image.getAttribute("width"))
+            this.playerScaleFactor = SCALE_FACTOR
+        }
+        draw(context) {
+            context.drawImage(
+                this.image,
+                0,
+                0,
+                gameFrame.width,
+                gameFrame.height,
+            );
+        }
+    }
+
+    const backgroundImage = new BackgroundImage()
+    const lopez = new Lopez();
+
+    const validKeys = {
+        "w": "up",
+        "a": "left",
+        "s": "down",
+        "d": "right"
+
+    }
+
+    let currentKeys = []
+
+
+    lopez.draw(ctx)
+    
+    document.addEventListener("keydown", (event) => {
+        const key = event.key;
+        const validKey = validKeys[key]
+
+        if (validKey === undefined) {
+            return;
+        };
+
+        if (!currentKeys.includes(validKey)) {
+            currentKeys.push(validKey) //add to currentKeys
+        } 
+
+        lopez.isMoving = true;
+    })
+
+    document.addEventListener("keyup", (event) => {
+        const key = event.key;
+        const validKey = validKeys[key]
+
+        if (key == "e") {
+            console.log(`(${lopez.x},${lopez.y})`);
+            debugger;
+        };
+
+        if (validKey === undefined) {
+            return;
+        };
+
+        currentKeys = currentKeys.filter((currKey) => {
+                return currKey !== validKey;  //remove from currentKeys 
+        }) 
+
+        lopez.isMoving = !!currentKeys.length
+    })
+
+    let isLoading = false
+
+    function moveLopez () {
+        lopez.isFloored = lopez.y >= gameFrame.height-(backgroundImage.playerScaleFactor*SPRITE_HEIGHT)
+        if (currentKeys.includes("up") && lopez.isMoving && lopez.y > 0 && !isLoading && lopez.isFloored && !lopez.isJumping) {
+            lopez.isJumping = true
+            lopez.startJumpY = lopez.y
+        }
+        if (currentKeys.includes("up") && lopez.isMoving && lopez.y > 0 && !isLoading && lopez.isJumping && lopez.currJumpHeight < MAX_JUMP_HEIGHT) {
+            lopez.currJumpHeight += 18
+            console.log('upper')
+        }
+        if (lopez.y < gameFrame.height-(backgroundImage.playerScaleFactor*SPRITE_HEIGHT) && !isLoading) {
+                lopez.y += GRAVITY_SPEED
+            if (currentKeys.includes("down") && lopez.isMoving) {
+                lopez.y += LOPEZ_SPEED
+            }
+        }
+        if (currentKeys.includes("left") && lopez.isMoving && lopez.x > 0 && !isLoading) {
+            lopez.x -= LOPEZ_SPEED
+        }
+        if (currentKeys.includes("right") && lopez.isMoving && lopez.x < gameFrame.width-(backgroundImage.playerScaleFactor*SPRITE_WIDTH) && !isLoading) {
+            lopez.x += LOPEZ_SPEED
+        }
+        if (lopez.isJumping) {
+            if (lopez.y > lopez.startJumpY-lopez.currJumpHeight) {
+                lopez.y -= JUMP_POWER
+            }
+            if (lopez.y <= lopez.startJumpY-lopez.currJumpHeight) {
+                lopez.isJumping = false
+                lopez.currJumpHeight = MIN_JUMP_HEIGHT
+                lopez.startJumpY = undefined;
+            }
+        }
+
+        if (lopez.isMoving) {
+            lopez.currentDirection = currentKeys[currentKeys.length-1];
+        }
+
+        ctx.clearRect(0, 0, gameFrame.width, gameFrame.height);
+
+        // Draws Background
+        backgroundImage.draw(ctx)
+        // Draws the current frame of the sprite.
+        if (!isLoading) {
+            lopez.draw(ctx);
+        }
+
+        setTimeout(() => {requestAnimationFrame(moveLopez);}, LOPEZ_SPEED)
+    }
+
+    function animate() {
+        switch (lopez.currentDirection) {
+            case "up": 
+                lopez.frameY = 3;
+                break;
+            case "left":
+                lopez.frameY = 1;
+                break;
+            case "right":
+                lopez.frameY = 2;
+                break;
+            case "down":
+                lopez.frameY = 0;
+                break;
+            default: 
+                break;
+        }
+
+        if (lopez.isMoving) {
+            lopez.updateFrame();
+        }
+
+        if (!lopez.isMoving) {
+            lopez.frameX = 0;
+        }
+
+        if (isLoading) {
+            lopez.frameX = 0;
+        }
+
+        setTimeout(() => {requestAnimationFrame(animate);}, ANIMATION_SPEED);
+    }
+
+    const speedValues = {
+        1.7: 4,
+        0.6: 2,
+        0.9: 2
+    }
+
+    animate()
+    moveLopez()
+});
+</script>

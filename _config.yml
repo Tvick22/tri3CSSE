@@ -9,7 +9,7 @@ remote_theme: jekyll/minima
 minima:
   social_links:
     - { platform: github, user_url: "https://github.com/nighthawkcoders/tri3CSSE"}
-    - { platform: x, user_url: "https://x.com/NighthawkCoding/" }
+    - { platform: instagram, user_url: "https://instagram.com/tvicktory22/" }
     - { platform: youtube, user_url: "https://www.youtube.com/@nighthawkcodingsociety2868" }      
 # remote_theme: pages-themes/dinky@v0.2.0
 # remote_theme: pages-themes/minimal@v0.2.0
