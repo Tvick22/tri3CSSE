@@ -83,7 +83,14 @@ image: /images/platformer/backgrounds/home.png
        * 2.) Each GameLevel has one-to-many GameObjects
        * ==========================================
       */
-  
+      document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space') {
+                    event.preventDefault();
+                }
+            }
+        );
+      // Disables Spacebar from Scrolling Down   
+
       // Setup game data, the objects and levels
       GameSetup.initLevels("{{site.baseurl}}"); 
   
