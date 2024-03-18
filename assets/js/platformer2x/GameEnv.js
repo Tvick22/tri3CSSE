@@ -65,7 +65,9 @@ export class GameEnv {
     static backgroundMountainsSpeed = 0;
     static backgroundCloudsSpeed = 2;
     static transitionHide = false;
-    static gravity = 3;
+    static gravity = 5;
+    static jumpPower = 15;
+    static jumpHeight = 200;
     static destroyedMushroom = false;
     static playMessage = false;
     static difficulty = "normal";

@@ -25,10 +25,30 @@ export class Player extends Character {
 
         // Player control data
         this.moveSpeed = this.speed * 3;
-        this.pressedKeys = {};
+        this.pressedKeys = [];
+
+        this.direction = "right"
+
         this.movement = {up: true, down: true, left: true, right: true};
-        this.isIdle = true;
-        this.directionKey = "d"; // initially facing right
+        this.isIdle = !this.pressedKeys.length;
+
+        this.isJumping = false;
+        this.jumpHeight = GameEnv.jumpHeight;
+        this.startJumpY = undefined;
+        this.jumpPower = GameEnv.jumpPower
+
+        this.keyBinds = {
+            " ": "jump",
+            "w": "jump",
+            "a": "left",
+            "s": "dash",
+            "d": "right",
+            "ArrowUp": "jump",
+            "ArrowLeft": "left",
+            "ArrowDown": "dash",
+            "ArrowRight": "right"
+        }
+        // this.directionKey = "d"; // initially facing right
 
         // Store a reference to the event listener function
         this.keydownListener = this.handleKeyDown.bind(this);
@@ -53,28 +73,25 @@ export class Player extends Character {
      * Each method checks a specific condition and returns a boolean indicating whether that condition is met.
      */
 
-    // helper: player facing left
-    isFaceLeft() { return this.directionKey === "a"; }
-    // helper: left action key is pressed
-    isKeyActionLeft(key) { return key === "a"; }
-    // helper: player facing right  
-    isFaceRight() { return this.directionKey === "d"; }
-    // helper: right action key is pressed
-    isKeyActionRight(key) { return key === "d"; }
-    // helper: dash key is pressed
-    isKeyActionDash(key) { return key === "s"; }
+    // // helper: player facing left
+    // isFaceLeft() { return this.directionKey === "a"; }
+    // // helper: left action key is pressed
+    // isKeyActionLeft(key) { return key === "a"; }
+    // // helper: player facing right  
+    // isFaceRight() { return this.directionKey === "d"; }
+    // // helper: right action key is pressed
+    // isKeyActionRight(key) { return key === "d"; }
+    // // helper: dash key is pressed
+    // isKeyActionDash(key) { return key === "s"; }
 
     // helper: action key is in queue 
-    isActiveAnimation(key) { return (key in this.pressedKeys) && !this.isIdle; }
     // helper: gravity action key is in queue
-    isActiveGravityAnimation(key) {
-        var result = this.isActiveAnimation(key) && (this.bottom <= this.y || this.movement.down === false);
-    
+    canJump() {
+        const result = this.pressedKeys.includes("jump") && (this.bottom <= this.y || this.movement.down === false);
         // return to directional animation (direction?)
         if (this.bottom <= this.y || this.movement.down === false) {
             this.setAnimation(this.directionKey);
         }
-    
         return result;
     }
 
@@ -109,22 +126,22 @@ export class Player extends Character {
      */
     setAnimation(key) {
         // animation comes from playerData
-        var animation = this.playerData[key]
-        // direction setup
-        if (this.isKeyActionLeft(key)) {
-            this.directionKey = key;
-            this.playerData.w = this.playerData.wa;
-        } else if (this.isKeyActionRight(key)) {
-            this.directionKey = key;
-            this.playerData.w = this.playerData.wd;
-        }
-        // set frame and idle frame
-        this.setFrameY(animation.row);
-        this.setMaxFrame(animation.frames);
-        if (this.isIdle && animation.idleFrame) {
-            this.setFrameX(animation.idleFrame.column)
-            this.setMinFrame(animation.idleFrame.frames);
-        }
+        // var animation = this.playerData[key]
+        // // direction setup
+        // if (this.isKeyActionLeft(key)) {
+        //     this.directionKey = key;
+        //     this.playerData.w = this.playerData.wa;
+        // } else if (this.isKeyActionRight(key)) {
+        //     this.directionKey = key;
+        //     this.playerData.w = this.playerData.wd;
+        // }
+        // // set frame and idle frame
+        // this.setFrameY(animation.row);
+        // this.setMaxFrame(animation.frames);
+        // if (this.isIdle && animation.idleFrame) {
+        //     this.setFrameX(animation.idleFrame.column)
+        //     this.setMinFrame(animation.idleFrame.frames);
+        // }
     }
    
     /**
@@ -141,43 +158,66 @@ export class Player extends Character {
         GameEnv.PlayerPosition.playerX = this.x;
         GameEnv.PlayerPosition.playerY = this.y;
 
+
         // GoombaBounce deals with player.js and goomba.js
         if (GameEnv.goombaBounce === true) {
             GameEnv.goombaBounce = false;
-            this.y = this.y - 100;
+            this.isJumping = true
+            this.startJumpY = this.y
         }
 
         if (GameEnv.goombaBounce1 === true) {
             GameEnv.goombaBounce1 = false; 
-            this.y = this.y - 250
+            this.isJumping = true
+            this.startJumpY = this.y
         } 
 
         // Player moving right 
-        if (this.isActiveAnimation("a")) {
-            if (this.movement.left) this.x -= this.isActiveAnimation("s") ? this.moveSpeed : this.speed;  // Move to left
-        }
+        // if (this.isActiveAnimation("a")) {
+        //     if (this.movement.left) this.x -= this.isActiveAnimation("s") ? this.moveSpeed : this.speed;  // Move to left
+        // }
         // Player moving left
-        if (this.isActiveAnimation("d")) {
-            if (this.movement.right) this.x += this.isActiveAnimation("s") ? this.moveSpeed : this.speed;  // Move to right
+        if (this.pressedKeys.includes("right")) {
+            if (this.movement.right) this.x += this.pressedKeys.includes("dash") ? this.moveSpeed : this.speed;  // Move to right
         }
-        // Player moving at dash speed left or right 
-        if (this.isActiveAnimation("s")) {}
+        if (this.pressedKeys.includes("left")) {
+            if (this.movement.left) this.x -= this.pressedKeys.includes("dash") ? this.moveSpeed : this.speed;  // Move to right
+        }
 
-        // Player jumping
-        if (this.isActiveGravityAnimation("w")) {
-            playJump();
-            if (this.gravityEnabled) {
-                if (GameEnv.difficulty === "easy") {
-                    this.y -= (this.bottom * .50);  // bottom jump height
-                } else if (GameEnv.difficulty === "normal") {
-                    this.y -= (this.bottom * .40);
-                } else {
-                    this.y -= (this.bottom * .30);
-                }
-            } else if (this.movement.down === false) {
-                this.y -= (this.bottom * .15);  // platform jump height
+        if (this.pressedKeys.includes("jump") && !this.isJumping && this.canJump()) {
+            console.log(this.isJumping)
+            playJump()
+            this.isJumping = true;
+            this.startJumpY = this.y
+        }
+        //up means less Y
+        if (this.isJumping) {
+            if (this.y > this.startJumpY-this.jumpHeight) {
+                this.y -= this.jumpPower+GameEnv.gravity
+            }
+            if (this.y <= this.startJumpY-this.jumpHeight) {
+                this.isJumping = false
+                this.startJumpY = undefined
             }
         }
+        // Player moving at dash speed left or right 
+        // if (this.isActiveAnimation("s")) {}
+
+        // Player jumping
+        // if (this.isActiveGravityAnimation("w")) {
+        //     playJump();
+        //     if (this.gravityEnabled) {
+        //         if (GameEnv.difficulty === "easy") {
+        //             this.y -= (this.bottom * .50);  // bottom jump height
+        //         } else if (GameEnv.difficulty === "normal") {
+        //             this.y -= (this.bottom * .40);
+        //         } else {
+        //             this.y -= (this.bottom * .30);
+        //         }
+        //     } else if (this.movement.down === false) {
+        //         this.y -= (this.bottom * .15);  // platform jump height
+        //     }
+        // }
 
         //Prevent Player from Dashing Through Tube
         let tubeX = (.80 * GameEnv.innerWidth)
@@ -357,46 +397,53 @@ export class Player extends Character {
      */    
     
     handleKeyDown(event) {
-        if (this.playerData.hasOwnProperty(event.key)) {
-            const key = event.key;
-            if (!(event.key in this.pressedKeys)) {
-                //If both 'a' and 'd' are pressed, then only 'd' will be inputted
-                //Originally if this is deleted, player would stand still. 
-                if (this.pressedKeys['a'] && key === 'd') {
-                    delete this.pressedKeys['a']; // Remove "a" key from pressedKeys
-                    return; //(return) = exit early
-                } else if (this.pressedKeys['d'] && key === 'a') {
-                    // If "d" is pressed and "a" is pressed afterward, ignore "a" key
-                    return;
-                }
-                this.pressedKeys[event.key] = this.playerData[key];
-                this.setAnimation(key);
-                // player active
-                this.isIdle = false;
-                GameEnv.transitionHide = true;
-            }
+        if (!this.keyBinds[event.key]) return; //key must be valid (in keyBinds)
 
-            // dash action on
-            if (this.isKeyActionDash(key)) {
-                GameEnv.dash = true;
-                this.canvas.style.filter = 'invert(1)';
-            }
-            // parallax background speed starts on player movement
-            if (this.isKeyActionLeft(key) && this.x > 2) {
-                GameEnv.backgroundHillsSpeed = -0.4;
-                GameEnv.backgroundMountainsSpeed = -0.1;
-            } else if (this.isKeyActionRight(key)) {
-                GameEnv.backgroundHillsSpeed = 0.4;
-                GameEnv.backgroundMountainsSpeed = 0.1;
-            } 
-            /* else if (this.isKeyActionDash(key) && this.directionKey === "a") {
-                 GameEnv.backgroundHillsSpeed = -0.4;
-                 GameEnv.backgroundMountainsSpeed = -0.1;
-             } else if (this.isKeyActionDash(key) && this.directionKey === "d") {
-                 GameEnv.backgroundHillsSpeed = 0.4;
-                 GameEnv.backgroundMountainsSpeed = 0.1;
-            } */ // This was unnecessary, and broke hitboxes / alloswed diffusion through matter
-        }
+        if (this.pressedKeys.includes(this.keyBinds[event.key])) return; //keyBind/direction can not be pressed already
+
+        this.pressedKeys.push(this.keyBinds[event.key]) //Add keybind direction to pressed keys
+        
+
+        // if (this.playerData.hasOwnProperty(event.key)) {
+        //     const key = event.key;
+        //     if (!(event.key in this.pressedKeys)) {
+        //         //If both 'a' and 'd' are pressed, then only 'd' will be inputted
+        //         //Originally if this is deleted, player would stand still. 
+        //         if (this.pressedKeys['a'] && key === 'd') {
+        //             delete this.pressedKeys['a']; // Remove "a" key from pressedKeys
+        //             return; //(return) = exit early
+        //         } else if (this.pressedKeys['d'] && key === 'a') {
+        //             // If "d" is pressed and "a" is pressed afterward, ignore "a" key
+        //             return;
+        //         }
+        //         this.pressedKeys[event.key] = this.playerData[key];
+        //         this.setAnimation(key);
+        //         // player active
+        //         this.isIdle = false;
+        //         GameEnv.transitionHide = true;
+        //     }
+
+        //     // dash action on
+        //     if (this.isKeyActionDash(key)) {
+        //         GameEnv.dash = true;
+        //         this.canvas.style.filter = 'invert(1)';
+        //     }
+        //     // parallax background speed starts on player movement
+        //     if (this.isKeyActionLeft(key) && this.x > 2) {
+        //         GameEnv.backgroundHillsSpeed = -0.4;
+        //         GameEnv.backgroundMountainsSpeed = -0.1;
+        //     } else if (this.isKeyActionRight(key)) {
+        //         GameEnv.backgroundHillsSpeed = 0.4;
+        //         GameEnv.backgroundMountainsSpeed = 0.1;
+        //     } 
+        //     /* else if (this.isKeyActionDash(key) && this.directionKey === "a") {
+        //          GameEnv.backgroundHillsSpeed = -0.4;
+        //          GameEnv.backgroundMountainsSpeed = -0.1;
+        //      } else if (this.isKeyActionDash(key) && this.directionKey === "d") {
+        //          GameEnv.backgroundHillsSpeed = 0.4;
+        //          GameEnv.backgroundMountainsSpeed = 0.1;
+        //     } */ // This was unnecessary, and broke hitboxes / alloswed diffusion through matter
+        // }
     }
 
     /**
@@ -406,25 +453,44 @@ export class Player extends Character {
      * @param {Event} event - The keyup event.
      */
     handleKeyUp(event) {
-        if (this.playerData.hasOwnProperty(event.key)) {
-            const key = event.key;
-            if (event.key in this.pressedKeys) {
-                delete this.pressedKeys[event.key];
+        if (!this.keyBinds[event.key]) return; //key must be valid (in keyBinds)
+
+        if (!this.pressedKeys.includes(this.keyBinds[event.key])) return; //keyBind/direction has to be pressed already
+
+        const newKeys = this.pressedKeys.filter((key) => {
+            if (this.keyBinds[event.key] == key) {
+                return false
             }
-            this.setAnimation(key);  
-            // player idle
-            this.isIdle = true;
-            // dash action off
-            if (this.isKeyActionDash(key)) {
-                this.canvas.style.filter = 'invert(0)';
-                GameEnv.dash = false;
-            } 
-            // parallax background speed halts on key up
-            if (this.isKeyActionLeft(key) || this.isKeyActionRight(key) || this.isKeyActionDash(key)) {
-                GameEnv.backgroundHillsSpeed = 0;
-                GameEnv.backgroundMountainsSpeed = 0;
-            }
-        }
+            return true
+        })
+
+        //removes key from pressed Keys
+
+        this.pressedKeys = newKeys
+        
+        this.isIdle = !this.pressedKeys.length //if pressed keys is empty, isIdle is true
+
+        GameEnv.dash = this.pressedKeys.includes("dash") //if dash is pressed, dash is true
+
+        // if (this.playerData.hasOwnProperty(event.key)) {
+        //     const key = event.key;
+        //     if (event.key in this.pressedKeys) {
+        //         delete this.pressedKeys[event.key];
+        //     }
+        //     this.setAnimation(key);  
+        //     // player idle
+        //     this.isIdle = true;
+        //     // dash action off
+        //     if (this.isKeyActionDash(key)) {
+        //         this.canvas.style.filter = 'invert(0)';
+        //         GameEnv.dash = false;
+        //     } 
+        //     // parallax background speed halts on key up
+        //     if (this.isKeyActionLeft(key) || this.isKeyActionRight(key) || this.isKeyActionDash(key)) {
+        //         GameEnv.backgroundHillsSpeed = 0;
+        //         GameEnv.backgroundMountainsSpeed = 0;
+        //     }
+        // }
     }
 }
 

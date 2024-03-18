@@ -89,7 +89,7 @@ class GameObject {
     updateInfo(json) {
         var element = this.canvas;
         if (json.id === element.id) {
-            console.log("runs", json.width, json.height)
+            // console.log("runs", json.width, json.height)
             this.canvas.width = json.width;
             this.canvas.height = json.height;
             this.canvas.style.filter = json.filter;
