@@ -124,7 +124,7 @@ export class Player extends Character {
      * 
      * @param {string} key - The key representing the animation to set.
      */
-    setAnimation(key) {
+    setAnimation(direction) {
         // animation comes from playerData
         // var animation = this.playerData[key]
         // // direction setup
@@ -142,6 +142,7 @@ export class Player extends Character {
         //     this.setFrameX(animation.idleFrame.column)
         //     this.setMinFrame(animation.idleFrame.frames);
         // }
+
     }
    
     /**
@@ -403,6 +404,18 @@ export class Player extends Character {
 
         this.pressedKeys.push(this.keyBinds[event.key]) //Add keybind direction to pressed keys
         
+            if (this.pressedKeys.includes("left")) {
+                GameEnv.backgroundHillsSpeed = -0.4;
+                GameEnv.backgroundMountainsSpeed = -0.1;
+            }
+            if (this.pressedKeys.includes("right")) {
+                GameEnv.backgroundHillsSpeed = 0.4;
+                GameEnv.backgroundMountainsSpeed = 0.1;
+            }
+            if (this.pressedKeys.includes("left") && this.pressedKeys.includes("right")) {
+                GameEnv.backgroundHillsSpeed = 0;
+                GameEnv.backgroundMountainsSpeed = 0;
+            }
 
         // if (this.playerData.hasOwnProperty(event.key)) {
         //     const key = event.key;
@@ -472,6 +485,18 @@ export class Player extends Character {
 
         GameEnv.dash = this.pressedKeys.includes("dash") //if dash is pressed, dash is true
 
+        if (!this.pressedKeys.includes("left") && !this.pressedKeys.includes("right")) {
+            GameEnv.backgroundHillsSpeed = 0;
+            GameEnv.backgroundMountainsSpeed = 0;
+        }
+        if (this.pressedKeys.includes("left")) {
+            GameEnv.backgroundHillsSpeed = -0.4;
+            GameEnv.backgroundMountainsSpeed = -0.1;
+        }
+        if (this.pressedKeys.includes("right")) {
+            GameEnv.backgroundHillsSpeed = 0.4;
+            GameEnv.backgroundMountainsSpeed = 0.1;
+        }
         // if (this.playerData.hasOwnProperty(event.key)) {
         //     const key = event.key;
         //     if (event.key in this.pressedKeys) {
