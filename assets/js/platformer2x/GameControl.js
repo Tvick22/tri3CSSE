@@ -199,10 +199,9 @@ const GameControl = {
 
         // Update invert property
         GameEnv.setInvert();
-        
         // Trigger a resize to redraw canvas elements
         window.dispatchEvent(new Event('resize'));
-
+        
         this.inTransition = false;
     },
 

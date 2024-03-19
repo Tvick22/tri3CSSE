@@ -126,15 +126,9 @@ export class Player extends Character {
      */
     setAnimation(direction) {
         // animation comes from playerData
-        // var animation = this.playerData[key]
-        // // direction setup
-        // if (this.isKeyActionLeft(key)) {
-        //     this.directionKey = key;
-        //     this.playerData.w = this.playerData.wa;
-        // } else if (this.isKeyActionRight(key)) {
-        //     this.directionKey = key;
-        //     this.playerData.w = this.playerData.wd;
-        // }
+        const animation = this.playerData[direction]
+
+        // console.log(animation)
         // // set frame and idle frame
         // this.setFrameY(animation.row);
         // this.setMaxFrame(animation.frames);
@@ -502,7 +496,7 @@ export class Player extends Character {
         //     if (event.key in this.pressedKeys) {
         //         delete this.pressedKeys[event.key];
         //     }
-        //     this.setAnimation(key);  
+            this.setAnimation(this.direction);  
         //     // player idle
         //     this.isIdle = true;
         //     // dash action off

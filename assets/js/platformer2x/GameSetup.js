@@ -210,12 +210,12 @@ const GameSetup = {
           height: 256,
           scaleSize: 80,
           speedRatio: 0.7,
-          w: { row: 10, frames: 15 },
+          jump: { row: 10, frames: 15 },
           wa: { row: 11, frames: 15 },
           wd: { row: 10, frames: 15 },
-          a: { row: 3, frames: 7, idleFrame: { column: 7, frames: 0 } },
-          s: { row: 12, frames: 15 },
-          d: { row: 2, frames: 7, idleFrame: { column: 7, frames: 0 } }
+          left: { row: 3, frames: 7, idleFrame: { column: 7, frames: 0 } },
+          dash: { row: 12, frames: 15 },
+          right: { row: 2, frames: 7, idleFrame: { column: 7, frames: 0 } }
         },
         monkey: {
           src: "/images/platformer/sprites/monkey.png",
@@ -223,12 +223,12 @@ const GameSetup = {
           height: 40,
           scaleSize: 80,
           speedRatio: 0.7,
-          w: { row: 9, frames: 15 },
+          jump: { row: 9, frames: 15 },
           wa: { row: 9, frames: 15 },
           wd: { row: 9, frames: 15 },
-          a: { row: 1, frames: 15, idleFrame: { column: 7, frames: 0 } },
-          s: { row: 12, frames: 15 },
-          d: { row: 0, frames: 15, idleFrame: { column: 7, frames: 0 } }
+          left: { row: 1, frames: 15, idleFrame: { column: 7, frames: 0 } },
+          dash: { row: 12, frames: 15 },
+          right: { row: 0, frames: 15, idleFrame: { column: 7, frames: 0 } }
         },
         lopez: {
           src: "/images/platformer/sprites/lopezanimation.png", 
@@ -236,13 +236,13 @@ const GameSetup = {
           height: 52.5,
           scaleSize: 60,
           speedRatio: 0.7,
-          w: {row: 1, frames: 3},
+          jump: {row: 1, frames: 3},
           wa: {row: 1, frames: 3},
           wd: {row: 2, frames: 3},
           idle: { row: 6, frames: 1, idleFrame: {column: 1, frames: 0} },
-          a: { row: 1, frames: 3, idleFrame: { column: 1, frames: 0 } }, // Right Movement
-          s: {row: 1, frames: 3}, // Stop the movement 
-          d: { row: 2, frames: 3, idleFrame: { column: 1, frames: 0 } }, // Left Movement 
+          left: { row: 1, frames: 3, idleFrame: { column: 1, frames: 0 } }, // Right Movement
+          dash: {row: 1, frames: 3}, // Stop the movement 
+          right: { row: 2, frames: 3, idleFrame: { column: 1, frames: 0 } }, // Left Movement 
           runningLeft: { row: 5, frames: 3, idleFrame: {column: 1, frames: 0} },
           runningRight: { row: 4, frames: 3, idleFrame: {column: 1, frames: 0} },
         }
@@ -387,7 +387,7 @@ const GameSetup = {
         { name: 'flyingGoomba', id: 'flyingGoomba', class: FlyingGoomba, data: this.assets.enemies.flyingGoomba, xPercentage:  0.9, minPosition: 0.5},
         { name: 'lopez', id: 'player', class: Player, data: this.assets.players.lopez },
         { name: 'tube', id: 'tube', class: Tube, data: this.assets.obstacles.tube },
-        { name: 'complete', id: 'background', class: BackgroundTransitions,  data: this.assets.backgrounds.complete },
+        // { name: 'complete', id: 'background', class: BackgroundTransitions,  data: this.assets.backgrounds.complete },
         ];
         // Avenida Game Level added to the GameEnv ...
         new GameLevel( {tag: "avenida", callback: this.playerOffScreenCallBack, objects: avenidaGameObjects } );
@@ -413,7 +413,7 @@ const GameSetup = {
           { name: 'flyingGoomba', id: 'flyingGoomba', class: FlyingGoomba, data: this.assets.enemies.flyingGoomba, xPercentage:  0.9, minPosition: 0.5},
           { name: 'monkey', id: 'player', class: Player, data: this.assets.players.monkey },
           { name: 'tree', id: 'tree', class: Tree, data: this.assets.obstacles.tree },
-          { name: 'complete', id: 'background', class: BackgroundTransitions,  data: this.assets.backgrounds.complete },
+          // { name: 'complete', id: 'background', class: BackgroundTransitions,  data: this.assets.backgrounds.complete },
         ];
         // Space Game Level added to the GameEnv ...
         new GameLevel( {tag: "space", callback: this.playerOffScreenCallBack, objects: spaceGameObjects} );
