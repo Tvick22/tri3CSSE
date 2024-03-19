@@ -19,3 +19,4 @@ courses: { csse: {week: 23}, csp: {week: 23 }, csa: {week: 23}}
 
 ## 2. Integration of Code
 
+I took some time to look at how the player was set up, and found a way to fix the jumping movement. 
