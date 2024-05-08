@@ -277,3 +277,41 @@ const messageStateMachine = {
 ## Single Responsibility Principle
 
 Show evidence that you are using Single Responsibility Principle in your code. Expectation require that you adapt Jupyter Notebook to show your own single purpose method or single purpose switch case.
+
+## Coin.js
+
+```js
+ collisionAction() {
+        // check player collision
+        if (this.collisionData.touchPoints.other.id === "player") {
+            if (this.id) {
+                GameEnv.claimedCoinIds.push(this.id)
+            }
+            this.destroy();
+            GameControl.gainCoin(5)
+            GameEnv.playSound("coin");
+        }
+    }
+```
+
+When a player gets a coin, it will add the coin's id to the array, claimedCoinIds.
+
+```js
+    this.id = this.initiateId()
+
+    initiateId() {
+        const currentCoins = GameEnv.gameObjects
+
+        return currentCoins.length //assign id to the coin's position in the gameObject Array (is unique to the coin)
+    }
+```
+
+The coin's id is determined when it is created. So if it were the 5th Game Object created, the coin's id would be 5. This makes it so you don't have to go into each coin and give it a unique id.
+
+## GameEnv.js
+
+```js
+    static claimedCoinIds = []
+```
+
+This claimedCoinIds array is reset after every new level.
