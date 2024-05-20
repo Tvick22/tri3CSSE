@@ -63,6 +63,150 @@ const skibidiGameObjects = [
 ];
 ```
 
+#### This is a list of all the objects our game level utilizes to operate. Each object has properties such as a name, id, class, and data. The name and id helps us identify each object in the level. The class helps us draw and configure the game objects, and the data gives our game object more properties used to create the image and dimensions.
+
+#### *GameControl.js*
+
+```js
+gameLoop() {
+    // Turn game loop off during transitions
+    if (!this.inTransition) {
+
+        // Get current level
+        GameEnv.update();
+        const currentLevel = GameEnv.currentLevel;
+
+        // currentLevel is defined
+        if (currentLevel) {
+            // run the isComplete callback function
+            if (currentLevel.isComplete && currentLevel.isComplete()) {
+                const currentIndex = GameEnv.levels.indexOf(currentLevel);
+                // next index is in bounds
+                if (currentIndex !== -1 && currentIndex + 1 < GameEnv.levels.length) {
+                    // transition to the next level
+                    this.transitionToLevel(GameEnv.levels[currentIndex + 1]);
+                } 
+            }
+        // currentLevel is null, (ie start or restart game)
+        } else {
+            // transition to beginning of game
+            this.transitionToLevel(GameEnv.levels[0]);
+        }
+    }
+
+    // recycle gameLoop, aka recursion
+    requestAnimationFrame(this.gameLoop.bind(this));  
+}
+```
+
+#### In GameControl, the gameloop function controls the transistioning between different levels. It will wait until the currentLevel is complete, and then use the transitionToLevel function to switch to the next level.
+
+#### *GameControl.js*
+
+```js
+async transitionToLevel(newLevel) {
+    this.inTransition = true;
+
+    // Destroy existing game objects
+    GameEnv.destroy();
+
+    // Load GameLevel objects
+    if (GameEnv.currentLevel !== newLevel) {
+        GameEnv.claimedCoinIds = [];
+    }
+    await newLevel.load();
+    GameEnv.currentLevel = newLevel;
+
+    // Update invert property
+    GameEnv.setInvert();
+    
+    // Trigger a resize to redraw canvas elements
+    window.dispatchEvent(new Event('resize'));
+
+    this.inTransition = false;
+},
+```
+
+#### This is the transitionToLevel function. It starts by puting the state of the the game to inTransition. Next, it destroys all existing game objects. Then, if the current game level is not the same as the level it is transitioning to, it will clear the claimedCoinIds. After this, it will set the current level to the new one, and get out of transition mode.
+
+### **Drawing Game Objects**
+
+#### *GameEnv.js*
+
+```js
+static update() {
+    // Update game state, including all game objects
+    // if statement prevents game from updating upon player death
+    if (GameEnv.player === null || GameEnv.player.state.isDying === false) {
+        for (const gameObject of GameEnv.gameObjects) {
+            gameObject.update();
+            gameObject.serialize();
+            gameObject.draw();
+        } 
+    }
+}
+```
+
+#### This is the update function of GameEnv, it is called during the loop. It will loop through each game object and update, serialize, and draw it.
+
+#### SkibidiToilet.js
+
+```js
+update() {
+    super.update();
+    
+    // Check for boundaries
+    if (this.x <= this.minPosition || (this.x + this.canvasWidth >= this.maxPosition)) {
+        this.speed = -this.speed;
+    };
+
+    //Random Event 2: Time Stop All Goombas
+    if (GameControl.randomEventId === 2 && GameControl.randomEventState === 1) {
+        this.speed = 0;
+        if (this.name === "goombaSpecial") {
+            GameControl.endRandomEvent();
+        };
+    };
+
+    //Random Event 3: Kill a Random Goomba
+    //Whichever Goomba recieves this message first will die, then end the event so the other Goombas don't die
+    if (GameControl.randomEventId === 3 && GameControl.randomEventState === 1) {
+        this.destroy();
+        GameControl.endRandomEvent();
+    };
+
+    // Every so often change direction
+    switch(GameEnv.difficulty) {
+        case "normal":
+            if (Math.random() < 0.005) this.speed = -this.speed;
+            break;
+        case "hard":
+            if (Math.random() < 0.01) this.speed = -this.speed;
+            break;
+        case "impossible":
+            if (Math.random() < 0.02) this.speed = -this.speed;
+            break;
+    }
+    
+    //Immunize Goomba & Texture It
+    if (GameEnv.difficulty === "hard") {
+            this.canvas.style.filter = "invert(100%)";
+            this.canvas.style.scale = 1.25;
+            this.immune = 1;
+    } else if (GameEnv.difficulty === "impossible") {
+        this.canvas.style.filter = 'brightness(1000%)';
+        this.immune = 1;
+    }
+
+    // Move the enemy
+    this.x -= this.speed;
+
+    this.playerBottomCollision = false;
+}
+```
+
+#### This is the update function of our SkibidiToilet enemy character. Every iteration of the game loop, the update function will be called. This fuction updates the enemy's position and moves it to a new location.
+
 ## Class Design using DrawIO - <label for="total-grade">Total: </label> <select><option>0</option><option>1</option><option>2</option><option>3</option><select> / 3, <label for="total-grade">Grade: </label> <select><option>0</option><option>1</option><select> /1
 
 ---
