@@ -207,6 +207,39 @@ update() {
 
 #### This is the update function of our SkibidiToilet enemy character. Every iteration of the game loop, the update function will be called. This fuction updates the enemy's position and moves it to a new location.
 
+### **Examine the GameObjects (canvas items) and see changes in their properties [DEMO](https://nighthawkcoders.github.io/platformer3x/)**
+
+### **How we determine the end of level and where we transition between GameLevels**
+
+#### *GameSetup.js*
+
+```js
+// Game Over screen added to the GameEnv ...
+new GameLevel({ tag: "end", callback: this.gameOverCallBack, objects: endGameObjects });
+```
+
+#### This appears at the bottom of our GameSetup file, and creates a new level for the end of the game. It inlcudes endGameObjects (Which is just a single background for the end of the game), and has a callback function that handles the game ending.
+
+#### *GameSetup.js*
+
+```js
+gameOverCallBack: async function () {
+    const id = document.getElementById("gameOver");
+    id.hidden = false;
+    GameControl.stopTimer()
+    // Wait for the restart button to be clicked
+    await this.waitForButtonRestart('restartGame');
+    id.hidden = true;
+
+    // Change currentLevel to start/restart value of null
+    GameEnv.currentLevel = false;
+
+    return true;
+}
+```
+
+#### This is the callback for the end of a game. It will stop the timer, show the restart button at the top of the screen (with the id of "gameOver"). It will asynchronously wait (await) for the button to be pressed. After it is pressed, it will hide the button and restart the current level (set it to false).
+
 ## Class Design using DrawIO - <label for="total-grade">Total: </label> <select><option>0</option><option>1</option><option>2</option><option>3</option><select> / 3, <label for="total-grade">Grade: </label> <select><option>0</option><option>1</option><select> /1
 
 ---
