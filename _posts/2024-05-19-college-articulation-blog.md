@@ -7,6 +7,117 @@ type: ccc
 courses: { csse: { week: 7 } }
 ---
 
+## Javascript Objects
+
+Collection of key value pairs.
+
+---
+
+### Example Object (Car)
+
+```js
+const car = {
+    year: 2006,
+    type: "Honda Accord LX Special Edition",
+    liscensePlate: "123ABC",
+    VIN: "12HG56789MXN45678",
+    weightInPounds: 3200,
+    color: "Navy Blue",
+    passengers: ["bob","john","steve"],
+    drive () {
+        console.log("VROOM")
+    },
+    stop () {
+        console.log("SCREEECH")
+    },
+    honk () {
+        console.log("BEEP")
+    }
+}
+```
+
+#### Javascript objects can have both properties and methods. Properties in this example include: color, year, liscensePlate, etc. Properties can be stored as strings, numbers, objects, arrays, etc. Methods in this example are drive, stop, and honk. These methods can utilize properties inside of the object. Methods act like functions when called.
+
+## Finite State Machines (FSM)
+
+FSM helps control the behavior of a system by defining its different states.
+
+---
+
+### Example Finite State Machine (Message Handler)
+
+```js
+const messageStateMachine = {
+    currentStatus: "pending",
+
+    sendMessage () {
+        if (this.currentStatus === "sent") {
+            return new Error("message already sent")
+        }
+        //send message here
+        this.currentStatus = "sent"
+    },
+
+    unsendMessage () {
+        if (this.currentStatus === "unsent") {
+            return new Error("message already unsent")
+        }
+        //unsend message here
+        this.currentStatus = "unsent"
+    }
+
+    getMessageStatus () {
+        return this.currentStatus;
+    }
+}
+```
+
+#### This machine has an initial state of 'pending'. When you successfully attempt to send a message, it will update the status to 'sent'. If you successfully attempt to unsend a message, it will update the status to 'unsent'. If you want to see the machines current message status, you could call the method, 'getMessageStatus', which returns the current status of the state machine.
+
+## Single Responsibility Principle
+
+The concept that any single object in object-oriented programing (OOP) should be made for one specific function.
+
+---
+
+#### *Coin.js*
+
+```js
+ collisionAction() {
+        // check player collision
+        if (this.collisionData.touchPoints.other.id === "player") {
+            if (this.id) {
+                GameEnv.claimedCoinIds.push(this.id)
+            }
+            this.destroy();
+            GameControl.gainCoin(5)
+            GameEnv.playSound("coin");
+        }
+    }
+```
+
+#### When a player gets a coin, it will add the coin's id to the array, claimedCoinIds.
+
+```js
+    this.id = this.initiateId()
+
+    initiateId() {
+        const currentCoins = GameEnv.gameObjects
+
+        return currentCoins.length //assign id to the coin's position in the gameObject Array (is unique to the coin)
+    }
+```
+
+#### The coin's id is determined when it is created. So if it were the 5th Game Object created, the coin's id would be 5. This makes it so you don't have to go into each coin and give it a unique id.
+
+#### *GameEnv.js*
+
+```js
+    static claimedCoinIds = []
+```
+
+This claimedCoinIds array is reset after every new level.
+
 ## Game Control Code: <label for="total-grade">Total: </label> <select><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><select> / 5, <label for="total-grade">Grade: </label> <select><option>0</option><option>1</option><select> /1
 
 ---
