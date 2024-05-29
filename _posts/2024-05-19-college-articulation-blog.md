@@ -356,3 +356,7 @@ gameOverCallBack: async function () {
 ---
 
 Illustrate the design of GameObjects. Consider how Player, Enemy, and other Obstacles are all GameObjects.
+
+<div style="background-color: #323443; padding: 10px">
+    <img src="{{site.baseurl}}/images/ObjectsInGameLevel.png" alt="DrawIO Diagram">
+</div>
