@@ -360,3 +360,63 @@ Illustrate the design of GameObjects. Consider how Player, Enemy, and other Obst
 <div style="background-color: #323443; padding: 10px">
     <img src="{{site.baseurl}}/images/ObjectsInGameLevel.png" alt="DrawIO Diagram">
 </div>
+
+## My Favorite Features
+
+---
+
+### Sorting the leaderboard
+
+```js
+getTimeSortedLeaderboardData (slowestFirst) {
+        const localData = JSON.parse(localStorage.getItem(this.currentKey))
+        if (!localData) {
+            console.log("NO DATA")
+            return []
+        }
+        localData.sort((a, b) => a.time - b.time);
+        if (slowestFirst) {
+            localData.reverse()
+        }
+        
+        return localData
+    }, 
+
+    getCoinScoreSortedLeaderboardData (highestFirst) {
+        const localData = JSON.parse(localStorage.getItem(this.currentKey))
+        if (!localData) {
+            console.log("NO DATA")
+            return []
+        }
+        localData.sort((a, b) => a.coinScore - b.coinScore);
+        if (highestFirst) {
+            localData.reverse()
+        }
+
+        return localData
+    }, 
+
+    getDateSortedLeaderboardData (newestFirst) {
+        const localData = JSON.parse(localStorage.getItem(this.currentKey))
+        if (!localData) {
+            console.log("NO DATA")
+            return []
+        }
+
+        localData.sort((a, b) => {
+            const dateA = new Date(a.date)
+            const dateB = new Date(b.date)
+
+            return dateA - dateB
+        })
+        //defaults to oldest first
+        if (newestFirst) {
+            localData.reverse()
+        }
+        console.log(localData)
+        return localData
+    }
+```
+
+#### Array.prototype.sort()
+
