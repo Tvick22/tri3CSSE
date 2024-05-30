@@ -450,3 +450,14 @@ console.log(items); // [3, 2, 1]
 
 #### "The reverse() method transposes the elements of the calling array object in place, mutating the array, and returning a reference to the array."
 
+## Working with a large team in Github
+
+---
+
+#### As we progressed in the process of making our game together, we used a main Github repository to store the most up-to-date version of the game. Each group had a single "leader" or scrum master who created a Fork from the main repository. On these forks, we used branches to create different features and additons to our game. After creating a large feature or mulitple features, we merged our code with the main repository to update the game.
+
+#### As simple as it sounds, we still ran into many difficulties while collaborating and sharing code. The biggest issue our team faced was version control. We tended to fall behind in our production and create changes off of the older versions of the game. To combat this issue we need to ensure that our repository and branches are all up-to-date with the main branch. To do this when you are already far behind and have already added multiple commits and changes is very difficult.
+
+#### The most helpful git command we found while fixing our version was ```git pull --rebase```. Since our code became over 200 commits behind the main repository, I had decided that we would add our features manually as rebasing would prove to be very time consuming. I was able to manually add all of our features, and bring them onto the main repository, however this meant that our repository was still far behind production. I researched and ran multiple git commands to update the remote branch to match upstream, and after many our our team members faced difficulties pulling the updated repository to their local repository. I realized that using ```git pull --rebase``` rather than ```git pull``` would work by rebasing all of their commits and forcing their repository to be up to date.
+
+#### After finally fixing our repository and getting our team up-to-date, we were able to work on and add many features to the game.
