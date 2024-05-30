@@ -361,7 +361,7 @@ Illustrate the design of GameObjects. Consider how Player, Enemy, and other Obst
     <img src="{{site.baseurl}}/images/ObjectsInGameLevel.png" alt="DrawIO Diagram">
 </div>
 
-## My Favorite Features
+## My Favorite Feature
 
 ---
 
@@ -419,4 +419,34 @@ getTimeSortedLeaderboardData (slowestFirst) {
 ```
 
 #### Array.prototype.sort()
+
+```js
+array.sort(function(a,b){
+  return a - b
+})
+```
+
+#### If the callback returns...
+
+#### - **Less than 0:** "a" is sorted to be a lower index than "b".
+
+#### - **Zero:** "a" and "b" are considered equal, and no sorting is performed.
+
+#### - **Greater than 0:** "b" is sorted to be a lower index than "a".
+
+#### Date object
+
+#### "A JavaScript date is fundamentally specified as the time in milliseconds that has elapsed since the epoch, which is defined as the midnight at the beginning of January 1, 1970, UTC"
+
+#### Array.prototype.reverse()
+
+```js
+const items = [1, 2, 3];
+console.log(items); // [1, 2, 3]
+
+items.reverse();
+console.log(items); // [3, 2, 1]
+```
+
+#### "The reverse() method transposes the elements of the calling array object in place, mutating the array, and returning a reference to the array."
 
